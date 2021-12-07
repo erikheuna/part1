@@ -1,21 +1,52 @@
-/* eslint-disable no-unused-vars */
+const Header = (props) => {
+  return(
+    <h1>{props.course}</h1>
+  )
+  
+}
 
-const Hello = (props) => {
+const Content = (props) => {
   return(
     <div>
-     <p>Hello {props.name} , you are {props.age} years old.</p>
+    <Part name={props.part1} exercise={props.exercises1} /> 
+    <Part name={props.part2} exercise={props.exercises2} /> 
+    <Part name={props.part3} exercise={props.exercises3} /> 
+  </div>
+  )
+}
+
+const Part = (props) => {
+  return(
+    <div>
+      {props.name} {props.exercise}
     </div>
   )
 }
-/* eslint-disable no-unused-vars */
+
+const Total = (props) => {
+  return(
+    <p>Number of exercises : {props.exercises}</p>
+  )
+  
+}
+
 const App = () => {
-  const name = 'Peter';
-  const age = 26;
+  const course = 'Half Stack application development'
+  const part1 = 'Fundamentals of React'
+  const exercises1 = 10
+  const part2 = 'Using props to pass data'
+  const exercises2 = 7
+  const part3 = 'State of a component'
+  const exercises3 = 14 
   return (
     <div className="App">
-      <h1>Greetings</h1>
-      <Hello name="George" age={26 + 10} />
-      <Hello name="Allen" age={age} />
+      <Header course={course} />
+      <Content part1={part1} exercises1={exercises1}
+       exercises2={exercises2}
+        exercises3={exercises3}
+         part2={part2}
+          part3={part3} />
+      <Total exercises={exercises1 + exercises2 + exercises3} />
     </div>
   );
 }
