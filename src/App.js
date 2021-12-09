@@ -1,54 +1,59 @@
-const Header = (props) => {
-  return(
-    <h1>{props.course}</h1>
-  )
-  
-}
+import { useState } from "react";
 
-const Content = (props) => {
+const Button = (props) => {
   return(
     <div>
-    <Part name={props.part1.name} exercise={props.part1.exercises1} /> 
-    <Part name={props.part2.name} exercise={props.part2.exercises2} /> 
-    <Part name={props.part3.name} exercise={props.part2.exercises3} /> 
-  </div>
-  )
-}
-
-const Part = (props) => {
-  return(
-    <div>
-      {props.name} {props.exercise}
+      <button onClick={props.onClick} >
+      {props.text}
+      </button>
     </div>
   )
 }
 
-const Total = (props) => {
+const Statistics = (props) => {
+  if(props.good === 0 && props.neutral === 0 && props.bad === 0){
+    return(
+      <p>No statistics to show.</p>
+    )
+  }
   return(
-    <p>Number of exercises : {props.exo1 + props.exo2 + props.exo3}</p>
+    <div>
+    good:{props.good} <br/>
+    neutral:{props.neutral} <br/>
+    bad: {props.bad} <br/>
+    all: {props.total} <br/>
+    average: {(props.total) / 3} <br />
+    positive: { props.good*100/(props.total)} %
+    </div>
   )
-  
 }
 
 const App = () => {
-  const course = 'Half Stack application development'
-  const part1 = {
-    name: 'Fundamentals of React',
-    exercises: 10
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  const handleGoodClick = () => {
+    setGood(good + 1);
   }
-  const part2 = {
-    name: 'Using props to pass data',
-    exercises: 7
+
+  const handleNeutralClick = () => {
+    setNeutral(neutral + 1);
   }
-  const part3 = {
-    name: 'State of a component',
-    exercises: 14
+
+  const handleBadClick = () => {
+    setBad(bad + 1);
   }
+
   return (
     <div className="App">
-      <Header course={course} />
-      <Content part1={part1} part2={part2} part3={part3} />
-      <Total exo1={part1.exercises} exo2={part2.exercises} exo3={part3.exercises} />
+      <h1>Give feedback</h1>
+      <Button onClick={handleGoodClick} text="good" />
+      <Button onClick={handleNeutralClick} text="neutral"  />
+      <Button onClick={handleBadClick} text="bad" />
+
+      <h1>Statistics</h1>
+      <Statistics good={good} neutral={neutral} bad={bad} total={good + neutral + bad} /> 
     </div>
   );
 }
