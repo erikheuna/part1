@@ -1,54 +1,45 @@
-const Header = (props) => {
-  return(
-    <h1>{props.course}</h1>
-  )
-  
-}
+import { useState } from "react/cjs/react.development";
 
-const Content = (props) => {
+const Button = ({onClick, text}) => {
   return(
     <div>
-    <Part name={props.part1.name} exercise={props.part1.exercises1} /> 
-    <Part name={props.part2.name} exercise={props.part2.exercises2} /> 
-    <Part name={props.part3.name} exercise={props.part2.exercises3} /> 
-  </div>
-  )
-}
-
-const Part = (props) => {
-  return(
-    <div>
-      {props.name} {props.exercise}
+     <button onClick={onClick} >{text}</button>
     </div>
   )
 }
 
-const Total = (props) => {
-  return(
-    <p>Number of exercises : {props.exo1 + props.exo2 + props.exo3}</p>
-  )
-  
-}
-
 const App = () => {
-  const course = 'Half Stack application development'
-  const part1 = {
-    name: 'Fundamentals of React',
-    exercises: 10
+  const anecdotes = [
+    'If it hurts, do it more often',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients'
+  ]
+   
+  const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(new Array(anecdotes.length).fill(0));
+  // const [hasVotes, setHasVotes] = useState(false);
+
+  const changeAnecdote = () => {
+    setSelected(Math.floor(Math.random() * 7))
   }
-  const part2 = {
-    name: 'Using props to pass data',
-    exercises: 7
+
+  const voteAnecdote =() => {
+    const copy = [...votes];
+    copy[selected] += 1;
+    setVotes(copy);
+    // setHasVotes(true);
   }
-  const part3 = {
-    name: 'State of a component',
-    exercises: 14
-  }
+
   return (
     <div className="App">
-      <Header course={course} />
-      <Content part1={part1} part2={part2} part3={part3} />
-      <Total exo1={part1.exercises} exo2={part2.exercises} exo3={part3.exercises} />
+      {anecdotes[selected]} <br/>
+      <Button onClick={changeAnecdote} text="next anecdote" />
+      <Button onClick={voteAnecdote} text="vote" />
+      has {votes[selected]} votes.
     </div>
   );
 }
