@@ -1,17 +1,24 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Form from "./Components/Form";
 import PersonList from "./Components/PersonList";
 import Search from "./Components/Search";
+import axios from 'axios'
 
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123-45-67' }
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filteredNames, setFilteredNames] = useState("");
+
+  useEffect(() => {
+    axios
+    .get('http://localhost:3001/persons')
+    .then(response => {
+      setPersons(response.data)
+    })
+  }, [])
 
   const handleNameChange = (e) => {
     setNewName(e.target.value);
