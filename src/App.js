@@ -1,23 +1,86 @@
-import logo from './logo.svg';
-import './App.css';
+/* eslint-disable array-callback-return */
+/* eslint-disable no-unused-vars */
+import { useState, useEffect } from "react";
+import axios from 'axios';
+import Note from "./Components/Note";
+import noteService from './Services/noteService'
 
-function App() {
+const App = () => {
+
+  const [notes, setNotes] = useState([]);
+  const [newNote, setNewNote] = useState('');
+  const [showAll, setShowAll] = useState(true);
+
+  useEffect(() => {
+    noteService
+    .getAll()
+    .then(initialNotes => {
+      setNotes(initialNotes)
+    })
+  }, [])
+
+  const toggleImportanceOf = id => {
+    const note = notes.find(n => n.id === id);
+    const changedNote = {...note, important: !note.important}
+
+    noteService
+    .update(id, changedNote)
+    .then(returnedNote => {
+      setNotes(notes.map(note => note.id !== id ? note : returnedNote))
+    })
+    .catch(error => {
+      alert(`The note ${note.content} was already deleted from the server`);
+      setNotes(notes.filter(n => n.id !== id))
+    })
+  }
+
+  const addNote = event => {
+    event.preventDefault();
+    const noteObject = {
+      content:newNote,
+      date: new Date(),
+      important: Math.random() < 0.5
+    }
+
+    noteService
+    .create(noteObject)
+    .then(createdNote =>{
+      setNotes(notes.concat(createdNote));
+      setNewNote('');
+    })
+  }
+
+  const handleNoteChange = (event) => {
+    setNewNote(event.target.value)
+  }
+
+  const notesToShow = showAll ? notes : notes.filter(note => note.important)
+
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Notes</h1>
+        <div>
+          <button onClick={() => setShowAll(!showAll)} >
+            show {showAll ? 'important' : 'all'}
+          </button>
+        </div>
+        <ul>
+        {notesToShow.map(note => 
+          <Note key={note.id} 
+          note={note}
+          toggleImportance={() => toggleImportanceOf(note.id)} />
+        )}
+        </ul>
+        <form onSubmit={addNote}>
+         <input 
+            value={newNote}
+            onChange={handleNoteChange}
+         />
+         <button type="submit">Save</button>
+        </form>
+      
     </div>
   );
 }
