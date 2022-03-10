@@ -6,6 +6,8 @@ import ContactList from './Components/ContactList';
 import Filter from './Components/Filter';
 import Form from './Components/Form';
 import contactService from './Services/contactService'
+import ErrorMessage from './Components/ErrorMessage';
+import ValidationMessage from './Components/ValidationMessage';
 
 const App = () => {
 
@@ -15,6 +17,8 @@ const App = () => {
     number: ''
   })
   const [filteredNames, setFilteredNames] = useState("");
+  const [validMessage, setValidMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     contactService
@@ -88,6 +92,10 @@ const App = () => {
       .then(createdContact => {
         setContacts(contacts.concat(createdContact));
         setContact({name: '', number: ''})
+        setValidMessage(`${contact.name} has been added successfully`)
+        setTimeout(() => {
+          setValidMessage(null);
+        }, 5000);
       })  
     } 
   }
@@ -98,10 +106,21 @@ const App = () => {
     .then(deletedContact => {
       let text;
       if(window.confirm("Do you really want to delete this contact ?")){
-        alert("Contact deleted")
         setContacts(contacts.filter(contact => contact.id !== id))
         setContact({name:'', number: ''})
+        setValidMessage("contact deleted");
+        setTimeout(() => {
+          setValidMessage(null);
+        }, 5000);
       }
+    })
+    .catch(error => {
+      setErrorMessage(
+        `${contact.name} has already been deleted from server`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000);
     })
   }
 
@@ -109,6 +128,8 @@ const App = () => {
     <div className="App">
       <Filter 
       display={displayFilteredName} />
+      <ValidationMessage validMessage={validMessage} />
+      <ErrorMessage errorMessage={errorMessage} />
       <Form 
         handleName={handleNameChange} 
         handleNumber={handleNumberChange}
@@ -116,11 +137,12 @@ const App = () => {
         contact={contact}
        />
       <h1>Contact List</h1>
-      {namesToShow.map(contact => <ContactList 
-        key={contact.id}
-        contact={contact}
-        deleteContact={() => deleteContact(contact.id)}
-        />)}    
+      {namesToShow.map(contact => <div key={contact.id}>
+          <ul>
+          <ContactList
+          contact={contact}
+          deleteContact={() => deleteContact(contact.id)}
+          /></ul></div> )}       
     </div>
   );
 }
